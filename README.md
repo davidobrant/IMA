@@ -40,6 +40,14 @@ npm run start
 
 ## Frontend
 
+### .env
+
+NEXT_PUBLIC_DOMAIN=localhost
+
+NEXT_PUBLIC_BASE_URL=localhost:4000/api
+
+### Installation
+
 yarn
 
 yarn dev

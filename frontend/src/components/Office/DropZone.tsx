@@ -1,3 +1,5 @@
+import { useDragging } from "@/context/DraggingContext";
+import useStationActions from "@/hooks/useStationActions";
 import useUserActions from "@/hooks/useUserActions";
 import { Box, Loader, Tooltip } from "@mantine/core";
 import { useState } from "react";
@@ -6,6 +8,13 @@ import { HomeDown } from "tabler-icons-react";
 const DropZone = () => {
     const [hover, setHover] = useState<boolean>(false)
     const { benchUser, loading } = useUserActions()
+    const { moveComputorToService } = useStationActions()
+    const { 
+        draggingUser, 
+        setDraggingUser, 
+        draggingComputor, 
+        setDraggingComputor 
+    } = useDragging()
     
     const onDragOver = (e: any) => {
         e.preventDefault()
@@ -14,15 +23,31 @@ const DropZone = () => {
 
     const onDrop = async (e: any) => {
         setHover(false)
-        const userData = JSON.parse(e.dataTransfer.getData('userParams'))
-        if(!userData.stationId) {
+        let userData;
+        let computorData;
+        if(draggingUser) {
+            userData = JSON.parse(e.dataTransfer.getData('userParams'))
+            setDraggingUser(false)
+        }
+        if(draggingComputor) {
+            computorData = JSON.parse(e.dataTransfer.getData('computorParams'))
+            setDraggingComputor(false)
+        }
+        if(!userData?.stationId && !computorData?.stationId) {
             return
         }
         if(userData) {
             try {
-                await benchUser({ userId: userData.userId, stationId: userData.stationId})
+                await benchUser({ userId: userData?.userId, stationId: userData?.stationId})
             } catch (error) {
                 console.log(error)
+            }
+        }
+        if(computorData) {
+            try {
+                await moveComputorToService({ fromStation: computorData?.stationId})
+            } catch (error) {
+                
             }
         }
     }

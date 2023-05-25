@@ -1,21 +1,20 @@
-import { IGetStationResponse } from "@/utils/types";
 import { Box, createStyles, Text } from "@mantine/core";
 import Station from "./Station";
 import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
 import StationModal from "../Modals/StationModal";
+import useStations from "@/hooks/useStations";
 
-const Stations = ({ stations }: { stations: IGetStationResponse[] }) => {
+const Stations = () => {
     const { classes, cx } = useStyles()
     const [opened, { close, toggle}] = useDisclosure()
     const [current, setCurrent] = useState<number>(0)
-    const [showComputors, setShowComputors] = useState<boolean>(false)
+    const { stations } = useStations()
 
     const openModal = (stationId: number) => {
         setCurrent(stationId)
         toggle()
     }
-
 
     return ( 
         <Box>
@@ -29,7 +28,7 @@ const Stations = ({ stations }: { stations: IGetStationResponse[] }) => {
                     >
                         {station.stationId}
                     </Text>
-                    <Station station={station} showComputors={showComputors}/>
+                    <Station station={station} />
                 </Box>
             )}) : undefined}
             <StationModal opened={opened} close={close} stationId={current}/>

@@ -16,7 +16,7 @@ db.connect(async (err, connection) => {
     userId int NOT NULL AUTO_INCREMENT, 
     firstName varchar(45) NOT NULL, 
     lastName varchar(45) NOT NULL, 
-    email varchar(45) NOT NULL, 
+    email varchar(45) NOT NULL UNIQUE, 
     password varchar(100) NOT NULL, 
     PRIMARY KEY (userId)) 
     ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
@@ -50,6 +50,14 @@ db.connect(async (err, connection) => {
     CONSTRAINT FK_UserStation FOREIGN KEY (userId) REFERENCES Users(userId)
     ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
     `;
+  let createComputorsTable = `CREATE TABLE Computors (
+    computorId int NOT NULL AUTO_INCREMENT, 
+    serialNr varChar(45),
+    type varChar(45),
+    status varChar(45),
+    PRIMARY KEY (computorId)
+    ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+    `;
 
   db.query(createUsersTable, async (err) => {
     if (err) {
@@ -71,8 +79,13 @@ db.connect(async (err, connection) => {
             if (err) {
               process.exit(1);
             }
-            console.log('--- TABLES CREATED ---');
-            process.exit(0);
+            db.query(createComputorsTable, async (err) => {
+              if(err) {
+                process.exit(1);
+              }
+              console.log('--- TABLES CREATED ---');
+              process.exit(0);
+            })
           })
         });
       });

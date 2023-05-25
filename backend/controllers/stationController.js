@@ -21,6 +21,16 @@ stationController.getStationById = async (req, res) => {
     }
 }
 
+stationController.getStationByUserId = async (req, res) => {
+    const userId = Number(req.params.userId)
+    try {
+        const station = await db.getStationByUserId(userId)
+        res.send(station)
+    } catch (error) {
+        res.json({ message: "Something went wrong..."})
+    }
+}
+
 stationController.updateStation = async (req, res) => {
     const stationId = Number(req.params.stationId)
     try {

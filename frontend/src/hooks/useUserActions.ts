@@ -23,7 +23,33 @@ const useUserActions = () => {
     const { mutateAsync: benchUser, isLoading: loadingBench } = useMutation(routes.benchUser, {
         onSuccess: () => {
             queryQlient.invalidateQueries(['getStations']),
-            queryQlient.invalidateQueries(['getInactiveUsers'])
+            queryQlient.invalidateQueries(['getInactiveUsers']),
+            queryQlient.invalidateQueries(['getActiveUsers']),
+            queryQlient.invalidateQueries(['getUsers'])
+        }
+    })
+    
+    const { mutateAsync: deleteUser, isLoading: loadingDelete } = useMutation(routes.deleteUser, {
+        onSuccess: () => {
+            queryQlient.invalidateQueries(['getStations']),
+            queryQlient.invalidateQueries(['getInactiveUsers']),
+            queryQlient.invalidateQueries(['getActiveUsers']),
+            queryQlient.invalidateQueries(['getUsers'])
+        }
+    })
+    
+    const { mutateAsync: updateUser, isLoading: loadingUpdate } = useMutation(routes.updateUser, {
+        onSuccess: () => {
+            queryQlient.invalidateQueries(['getStations']),
+            queryQlient.invalidateQueries(['getInactiveUsers']),
+            queryQlient.invalidateQueries(['getActiveUsers']),
+            queryQlient.invalidateQueries(['getUsers'])
+        }
+    })
+    
+    const { mutateAsync: toggleAdmin, isLoading: loadingToggleAdmin } = useMutation(routes.toggleAdmin, {
+        onSuccess: () => {
+            queryQlient.invalidateQueries(['getAdmins'])
         }
     })
 
@@ -40,6 +66,9 @@ const useUserActions = () => {
         moveUserToStation,
         moveUserToStationFromBench,
         benchUser,
+        deleteUser,
+        updateUser,
+        toggleAdmin,
         loading
     }
 }

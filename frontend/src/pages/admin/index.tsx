@@ -1,7 +1,30 @@
-import { Box } from "@mantine/core";
+import Computors from "@/components/Admin/Computors";
+import Stations from "@/components/Admin/Stations";
+import Users from "@/components/Admin/Users";
+import useProfile from "@/hooks/useProfile";
+import { Box, Tabs } from "@mantine/core";
 import Head from "next/head";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 const Admin = () => {
+    const { profile } = useProfile()
+    const router = useRouter()
+    const isAdmin = !!profile?.roles?.includes("ADMIN")
+
+    useEffect(() => {
+        if(profile && !isAdmin) {
+            router.push('/')
+        }
+    }, [profile, isAdmin, router])
+
+
+    const [active, setActive] = useState<string | null>('users')
+
+    if(!isAdmin) {
+        return <h1>Forbidden</h1>
+    }
+
     return ( 
         <>
             <Head>
@@ -10,8 +33,31 @@ const Admin = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <Box>
-                Admin page
+            <Box 
+                sx={{
+                    minWidth: 800,
+                }}
+            >
+                <Tabs value={active} onTabChange={setActive}>
+                    <Tabs.List grow>
+                        <Tabs.Tab value="users">Users</Tabs.Tab>
+                        <Tabs.Tab value="stations">Stations</Tabs.Tab>
+                        <Tabs.Tab value="computors">Computors</Tabs.Tab>
+                    </Tabs.List>
+
+                    <Box mt={8}>
+                        <Tabs.Panel value="users">
+                            <Users />
+                        </Tabs.Panel>
+                        <Tabs.Panel value="stations">
+                            <Stations />
+                        </Tabs.Panel>
+                        <Tabs.Panel value="computors">
+                            <Computors />
+                        </Tabs.Panel>
+                    </Box>
+
+                </Tabs>
             </Box>
         </>
      );

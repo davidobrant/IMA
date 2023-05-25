@@ -9,6 +9,11 @@ db.getAllUsers = async () => {
     return rows
 }
 
+db.getAdminUsers = async () => {
+    const [rows] = await pool.query('SELECT Users.userId FROM Users INNER JOIN UsersWithRoles ON Users.userId = UsersWithRoles.userId WHERE roleId = 3000')
+    return rows
+}
+
 db.getUserById = async (userId) => {
     const [row] = await pool.query(`SELECT userId, firstName, lastName, email FROM Users WHERE userId = ?`, [userId])
     return row[0]
@@ -36,6 +41,21 @@ db.getActiveUsers = async () => {
 db.getInactiveUsers = async () => {
     const [rows] = await pool.query('SELECT Users.userId, firstName, lastName, email FROM Users LEFT JOIN Stations ON Stations.userId = Users.userId WHERE Stations.stationId IS NULL')
     return rows
+}
+
+db.deleteUsersWithRoles = async (userId) => {
+    const [result] = await pool.query(`DELETE FROM UsersWithRoles WHERE userId = ?`, [userId])
+    return result
+}
+
+db.deleteUser = async (userId) => {
+    const [result] = await pool.query(`DELETE FROM Users WHERE userId = ?`, [userId])
+    return result
+}
+
+db.updateUser = async (userId, firstName, lastName, email) => {
+    const [row] = await pool.query(`UPDATE Users SET firstName = ?, lastName = ?, email = ? WHERE userId = ?`, [firstName, lastName, email, userId])
+    return row
 }
 
 /* --x-- Users --x-- */
@@ -75,6 +95,11 @@ db.getStationById = async (stationId) => {
     return row[0]
 }
 
+db.getStationByUserId = async (userId) => {
+    const [row] = await pool.query('SELECT * FROM Stations WHERE userId = ?', [userId])
+    return row[0]
+}
+
 db.updateStation = async (stationId) => {
     const [rows] = await pool.query('SELECT * FROM Stations WHERE stationId = ?', [stationId])
     return rows
@@ -86,6 +111,64 @@ db.getStationsWithUsers = async () => {
 }
 
 /* --x-- Stations --x-- */
+/* ----- Computors ----- */
+
+db.getComputors = async () => {
+    const [rows] = await pool.query(`SELECT * FROM Computors`)
+    return rows
+}
+
+db.getComputor = async (computorId) => {
+    const [row] = await pool.query(`SELECT * FROM Computors WHERE computorId = ?`, [computorId])
+    return row[0]
+}
+
+db.getActiveComputors = async () => {
+    const [rows] = await pool.query('SELECT * FROM Computors LEFT JOIN Stations ON Computors.computorId = Stations.computorId WHERE Stations.computorId IS NOT NULL')
+    return rows
+}
+
+db.getInActiveComputors = async () => {
+    const [rows] = await pool.query('SELECT Computors.computorId, serialNr, type, Computors.status FROM Computors LEFT JOIN Stations ON Computors.computorId = Stations.computorId WHERE Stations.computorId IS NULL')
+    return rows
+}
+
+db.addComputor = async (serialNr, type, status) => {
+    const [result] = await pool.query(`INSERT INTO Computors (serialNr, type, status) VALUES (?,?,?)`, [serialNr, type, status])
+    return result.insertId
+}
+
+db.getComputorFromStation = async (stationId) => {
+    const [row] = await pool.query(`SELECT computorId FROM Stations WHERE stationId = ?`, [stationId])
+    return row[0]
+}
+
+db.removeComputorFromStation = async (stationId) => {
+    const [result] = await pool.query(`UPDATE Stations SET computorId = ? WHERE stationId = ?`, [null, stationId])
+    return result
+}
+
+db.removeComputorFromStationByComputorId = async (computorId) => {
+    const [result] = await pool.query(`UPDATE Stations SET computorId = null WHERE computorId = ?`, [computorId])
+    return result
+}
+
+db.moveComputorToStation = async (computorId, stationId) => {
+    const [result] = await pool.query(`UPDATE Stations SET computorId = ? WHERE stationId = ?`, [computorId, stationId])
+    return result
+}
+
+db.deleteComputor = async (computorId) => {
+    const [result] = await pool.query(`DELETE FROM Computors WHERE computorId = ?`, [computorId])
+    return result
+}
+
+db.updateComputor = async (computorId, serialNr, type, status) => {
+    const [result] = await pool.query(`UPDATE Computors SET serialNr = ?, type = ?, status = ? WHERE computorId = ?`, [serialNr, type, status, computorId])
+    return result
+}
+
+/* --x-- Computors --x-- */
 /* ----- UserActions ----- */
 
 db.getUserFromStation = async (stationId) => {
@@ -95,6 +178,11 @@ db.getUserFromStation = async (stationId) => {
 
 db.removeUserFromStation = async (stationId) => {
     const [result] = await pool.query(`UPDATE Stations SET userId = ? WHERE stationId = ?`, [null, stationId])
+    return result
+}
+
+db.removeUserFromStationByUserId = async (userId) => {
+    const [result] = await pool.query(`UPDATE Stations SET userId = NULL WHERE userId = ?`, [userId])
     return result
 }
 

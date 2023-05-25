@@ -1,13 +1,15 @@
 import DropZone from "@/components/Office/DropZone";
+import InactiveComputors from "@/components/Office/InactiveComputors";
 import InactiveUsers from "@/components/Office/InactiveUsers";
 import Stations from "@/components/Office/Stations";
-import useStations from "@/hooks/useStations";
+import ToolBar from "@/components/Office/ToolBar";
+import { DraggingProvider } from "@/context/DraggingContext";
+import { ShowTooltipsProvider } from "@/context/ShowTooltipsContext";
 import { Box, useMantineTheme, Text } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import Head from "next/head";
 
 const Office = () => {
-    const { stations, loading } = useStations()
     const { breakpoints } = useMantineTheme()
     const isLarge = useMediaQuery(`(min-width: ${breakpoints.lg})`)
 
@@ -20,27 +22,35 @@ const Office = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             
-            {isLarge ? <Box 
-                sx={({ colors, colorScheme }) => ({ 
-                    position: "relative",
-                    width: "100%",
-                    maxWidth: 1200,
-                    margin: "0 auto",
-                    height: "100%",
-                    minHeight: 800,
-                    background: colorScheme === "dark" ? colors.dark[5] : colors.gray[2],
-                    userSelect: "none",
-                })}
-            >
-                <Stations stations={stations} />
-                <InactiveUsers />
-                <DropZone />            
-            </Box>
-            :
-            <Box>
-                <Text>Must be viewed on large screen</Text>
-            </Box>
-            }
+            <DraggingProvider>
+                <ShowTooltipsProvider>
+                    {isLarge ? <Box 
+                        sx={({ colors, colorScheme, shadows }) => ({ 
+                            position: "relative",
+                            width: "100%",
+                            maxWidth: 1200,
+                            margin: "0 auto",
+                            height: "100%",
+                            minHeight: 800,
+                            background: colorScheme === "dark" ? colors.dark[5] : colors.gray[2],
+                            userSelect: "none",
+                            boxShadow: colorScheme === "dark" ? "inset 0 0 2px 1px rgba(255,255,255,.1)": `inset ${shadows.xl}`, 
+                            borderRadius: 4,
+                        })}
+                    >
+                        <ToolBar />
+                        <Stations />
+                        <InactiveUsers />
+                        <DropZone />     
+                        <InactiveComputors />       
+                    </Box>
+                    :
+                    <Box>
+                        <Text>Must be viewed on large screen</Text>
+                    </Box>
+                    }
+                </ShowTooltipsProvider>
+            </DraggingProvider>
         </>
      );
 }

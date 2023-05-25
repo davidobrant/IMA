@@ -1,3 +1,5 @@
+import { useDragging } from "@/context/DraggingContext";
+import { useShowTooltips } from "@/context/ShowTooltipsContext";
 import useUserActions from "@/hooks/useUserActions";
 import useUsers from "@/hooks/useUsers";
 import { IGetStationResponse } from "@/utils/types";
@@ -12,22 +14,32 @@ const UserAvatar = ({ station, isActiveUser }: { station: IGetStationResponse, i
     const [dragging, setDragging] = useState<boolean>(false)
     const [hover, setHover] = useState<boolean>(false)
     const { moveUserToStation, moveUserToStationFromBench } = useUserActions()
+    const { showUsers } = useShowTooltips()
+    const { draggingUser, setDraggingUser } = useDragging()
 
     const onDragStart = (e: any, params: any) => {
         if(!user) {
             return;
         }
         setDragging(true)
+        setDraggingUser(true)
         e.dataTransfer.setData("userParams", JSON.stringify(params))
     }
 
     const onDragOver = (e: any) => {
+        if(!draggingUser) return
         e.preventDefault()
         setHover(true)
     }
     
     const onDrop = async (e: any, params: IGetStationResponse) => {
-        const data = JSON.parse(e.dataTransfer.getData("userParams"))
+        let data;
+        if(e.dataTransfer.getData("userParams")) {
+            data = JSON.parse(e.dataTransfer.getData("userParams"))
+        } else {
+            e.preventDefault()
+            return
+        }
         setHover(false)
         try {
             if(data.stationId) {
@@ -42,14 +54,26 @@ const UserAvatar = ({ station, isActiveUser }: { station: IGetStationResponse, i
     }
 
     return ( 
-        <Tooltip label={user ? `${user.firstName} ${user.lastName}` : "Available"} withArrow>
+        <Tooltip 
+            label={user ? `${user.firstName} ${user.lastName}` : "Available"} 
+            withArrow
+            opened={user ? showUsers || hover : hover}
+        >
             <Avatar 
                 draggable={!!user}
                 onDragStart={(e) => onDragStart(e, {...user, ...station})}
                 onDragOver={(e) => onDragOver(e)}
-                onDragEnter={() => setHover(true)}
+                onDragEnter={(e) => {
+                    if(!e.dataTransfer.getData("userParams")) return
+                    setHover(true)
+                }}
                 onDragLeave={() => setHover(false)}
-                onDragEnd={() => setDragging(false)}
+                onMouseEnter={() => setHover(true)}
+                onMouseLeave={() => setHover(false)}
+                onDragEnd={() => {
+                    setDragging(false)
+                    setDraggingUser(false)
+                }}
                 onDrop={(e) => onDrop(e, station)}
                 variant="unstyled"
                 radius={"xl"}
@@ -59,7 +83,6 @@ const UserAvatar = ({ station, isActiveUser }: { station: IGetStationResponse, i
                         [classes.available]: !user, 
                         [classes.dragging]: dragging, 
                         [classes.hover]: hover, 
-                    
                     })}
             >
                 {user ? initials : null}
@@ -102,6 +125,3 @@ const useStyles = createStyles(({ colors, colorScheme, shadows }) => ({
     }
 }))
 
-function moveUserToStationFromBench(arg0: { userId: any; toStation: number; }) {
-    throw new Error("Function not implemented.");
-}

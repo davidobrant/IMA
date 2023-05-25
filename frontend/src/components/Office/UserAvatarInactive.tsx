@@ -1,3 +1,4 @@
+import { useDragging } from "@/context/DraggingContext";
 import { IGetUserResponse } from "@/utils/types";
 import { Avatar, Tooltip, createStyles } from "@mantine/core";
 import { useState } from "react";
@@ -6,12 +7,14 @@ const UserAvatarInactive = ({ user, isActiveUser }: { user: IGetUserResponse, is
     const { classes, cx } = useStyles()
     const initials = `${user?.firstName?.toString()[0]?.toUpperCase()}${user?.lastName?.toString()[0]?.toUpperCase()}`
     const [dragging, setDragging] = useState<boolean>(false)
+    const { setDraggingUser } = useDragging()
 
     const onDragStart = (e: any, params: any) => {
         if(!user) {
             return;
         }
         setDragging(true)
+        setDraggingUser(true)
         e.dataTransfer.setData("userParams", JSON.stringify(params))
     }
 
@@ -20,7 +23,10 @@ const UserAvatarInactive = ({ user, isActiveUser }: { user: IGetUserResponse, is
             <Avatar 
                 draggable={!!user}
                 onDragStart={(e) => onDragStart(e, user)}
-                onDragEnd={() => setDragging(false)}
+                onDragEnd={() => {
+                    setDragging(false)
+                    setDraggingUser(false)
+                }}
                 variant="unstyled"
                 radius={"xl"}
                 className={cx(

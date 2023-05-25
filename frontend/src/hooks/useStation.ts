@@ -10,7 +10,7 @@ const useStation = (stationId: number) => {
     } = useQuery(['getStation', stationId], () => routes.getStation(stationId), {
         enabled: stationId !== 0
     })
-        
+            
     useEffect(() => {
         if (loadingStations) {
             setLoading(true)

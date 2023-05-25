@@ -106,12 +106,37 @@ init.StationsWithUsers = async () => {
     await pool.query(`INSERT INTO StationsWithUsers (stationId, userId) VALUES ?`, [query])
 }
 
+init.Computors = async () => {
+    const query = [
+        [1, "AAA111", "laptop", "working"],
+        [2, "BBB222", "laptop", "working"],
+        [3, "CCC333", "laptop", "working"],
+        [4, "DDD444", "laptop", "working"],
+        [5, "EEE555", "laptop", "working"],
+        [6, "FFF666", "laptop", "working"],
+        [7, "GGG777", "laptop", "working"],
+        [8, "HHH888", "laptop", "working"],
+        [9, "III999", "laptop", "working"],
+        [10, "AAA222", "laptop", "working"],
+        [11, "AAA333", "laptop", "working"],
+        [12, "AAA444", "laptop", "working"],
+        [13, "AAA555", "laptop", "service"],
+        [14, "AAA666", "laptop", "working"],
+        [15, "AAA777", "laptop", "working"],
+        [16, "AAA888", "laptop", "working"],
+        [17, "AAA999", "laptop", "working"],
+        [18, "BBB111", "laptop", "working"],
+    ]
+    await pool.query(`INSERT INTO Computors (computorId, serialNr, type, status) VALUES ?`, [query])
+}
+
 const createData = async () => {
         await init.Users()
         await init.Roles()
         await init.UsersWithRoles()
         await init.Stations()
         await init.StationsWithUsers()
+        await init.Computors()
         console.log('--- DATA CREATED ---')
         process.exit(1)
 }

@@ -1,15 +1,100 @@
+import useComputors from "@/hooks/useComputors";
 import useProfile from "@/hooks/useProfile";
-import useStation from "@/hooks/useStation";
-import { Avatar, Box, Text } from "@mantine/core";
+import useStationActions from "@/hooks/useStationActions";
+import useStations from "@/hooks/useStations";
+import useUserActions from "@/hooks/useUserActions";
+import { ActionIcon, Avatar, Box, Select, Text, Tooltip } from "@mantine/core";
 import Head from "next/head";
+import { useEffect, useState } from "react";
+import { DeviceLaptop, HomeDown } from "tabler-icons-react";
 
 const MyDesk = () => {
     const { profile } = useProfile()
-    const { station } = useStation(1)
+    const { getStationByUserId, getAvailableStations } = useStations()
+    const { getComputorById } = useComputors()
+    const { moveUserToStation, moveUserToStationFromBench, benchUser } = useUserActions()
+    const { moveComputorFromService, moveComputorToService } = useStationActions()
+    const { inactiveComputors } = useComputors()
 
-    console.log(profile)
-    console.log("stn", station)
+    const station = getStationByUserId(profile?.userId || 0)
+    const computor = getComputorById(station?.computorId || 0)
+    const availableStations = getAvailableStations()
 
+    const [stationValue, setStationValue] = useState<string | null>(null)
+    const [computorValue, setComputorValue] = useState<string | null>(null)
+    
+    const onStationChange = async (stationIdString?: string) => {
+        const userId = Number(profile?.userId)
+        if(!stationIdString || !userId) return
+        const stationId = parseInt(stationIdString)
+        const currentStationId = station?.stationId
+        if(currentStationId) {
+            try {
+                await moveUserToStation({ userId: userId, fromStation: currentStationId, toStation: stationId })
+            } catch (error) {
+                console.log(error)
+            }
+        } else {
+            try {
+                await moveUserToStationFromBench({ userId, toStation: stationId})
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        setStationValue(null)
+    }
+    
+    const onComputorChange = async (computorIdString?: string) => {
+        const stationId = Number(station?.stationId)
+        if(!computorIdString || !stationId) return
+        const computorId = parseInt(computorIdString)
+        try {
+            await moveComputorFromService({ computorId, toStation: stationId })
+        } catch (error) {
+            console.log(error)
+        }
+        setComputorValue(null)
+    }
+
+    const handleBench = async (userId: number) => {
+        if(!userId) return
+        const currentStationId = station?.stationId
+        if(currentStationId) {
+            try {
+                await benchUser({ userId: userId, stationId: currentStationId })
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        setStationValue(null)
+    }
+   
+    const handleService = async () => {
+        const currentStationId = station?.stationId
+        if(currentStationId) {
+            try {
+                await moveComputorToService({ fromStation: currentStationId })
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        setStationValue(null)
+    }
+
+    useEffect(() => {
+        if(stationValue) {
+            onStationChange(stationValue)
+        }
+        // eslint-disable-next-line
+    }, [stationValue])
+    
+    useEffect(() => {
+        if(computorValue) {
+            onComputorChange(computorValue)
+        }
+        // eslint-disable-next-line
+    }, [computorValue])
+    
     return ( 
         <>
             <Head>
@@ -19,10 +104,106 @@ const MyDesk = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Box>
-                <Text>This is my desk</Text>
                 {profile ? 
                     <>
-                        <Avatar>{profile.firstName}</Avatar>
+                        {station ? 
+                            <>
+                                <Text align="center">Currently on station </Text>
+                                <Box mt={12} 
+                                    sx={({ colorScheme }) => ({ 
+                                        display: "grid", 
+                                        placeContent: "center",
+                                    })}
+                                >
+                                    <Avatar size={"xl"}>{station?.stationId}</Avatar>
+                                </Box>
+                                <Box mt={20} mb={20} sx={{ display: "grid", placeContent: "center" }}>
+                                    <Tooltip label="Take a break">
+                                        <ActionIcon
+                                            onClick={() => handleBench(profile.userId)}
+                                            sx={({ colors, colorScheme, shadows }) => ({ 
+                                                color: colorScheme === "dark" ? colors.green[6] : colors.green[5],
+                                                boxShadow: colorScheme === "dark" ? "0 0 2px 2px rgba(255, 255, 255, .1)": "0 0 2px 2px rgba(0, 0, 0, .1)",
+                                            })}
+                                            size={"lg"}
+                                            >
+                                            <HomeDown />
+                                        </ActionIcon>
+                                    </Tooltip>
+                                </Box>
+                            </>
+                        : 
+                            <>
+                                <Text mb={20} align="center">Currently on the Bench</Text>
+                                {availableStations && availableStations.length > 0 ? 
+                                    <Box>
+                                        <Select 
+                                            label={"Available stations"}
+                                            data={availableStations.map(station => {
+                                                return {
+                                                    value: station.stationId.toString(),
+                                                    label: `${station.stationId}`,
+                                                }
+                                            })}
+                                            value={stationValue}
+                                            onChange={setStationValue}
+                                        />
+                                    </Box>
+                                : undefined}
+                            </>
+                        }
+                        {computor ? 
+                            <>
+                                <Box mt={40} mb={20}>
+                                    <Text>On this station is computor with serial number</Text>
+                                    <Box mt={20} sx={{ display: "grid", placeContent: "center"}}>
+                                        <DeviceLaptop size={48}/>
+                                    </Box>
+                                    <Text mt={12} mb={12} align="center" component="h4">{computor.serialNr}</Text>
+                                </Box>
+                                <Box mt={20} mb={20} sx={{ display: "grid", placeContent: "center" }}>
+                                    <Tooltip label="Return Computor">
+                                        <ActionIcon
+                                            onClick={handleService}
+                                            sx={({ colors, colorScheme, shadows }) => ({ 
+                                                color: colorScheme === "dark" ? colors.green[6] : colors.green[5],
+                                                boxShadow: colorScheme === "dark" ? "0 0 2px 2px rgba(255, 255, 255, .1)": "0 0 2px 2px rgba(0, 0, 0, .1)",
+                                            })}
+                                            size={"lg"}
+                                            >
+                                            <HomeDown />
+                                        </ActionIcon>
+                                    </Tooltip>
+                                </Box>
+                            </>
+                        : 
+                            <>
+                                {station ? 
+                                    <>
+                                    <Text fs={"italic"} align="center" mt={40}>No computor on station</Text>
+                                    {inactiveComputors && inactiveComputors.length > 0 ? 
+                                        <Box mt={20}>
+                                            <Select 
+                                                label={"Available computors"}
+                                                data={inactiveComputors.map(computor => {
+                                                    return {
+                                                        value: computor.computorId.toString(),
+                                                        label: `${computor.computorId}`,
+                                                    }
+                                                })}
+                                                value={computorValue}
+                                                onChange={setComputorValue}
+                                            />
+                                        </Box> 
+                                    : 
+                                    <>
+                                        <Box mt={40}>
+                                            <Text color="red">No computors available</Text>
+                                        </Box>
+                                    </>}
+                                    </> : undefined}
+                            </>
+                        }
                     </> : undefined}
             </Box>
         </>
@@ -30,3 +211,4 @@ const MyDesk = () => {
 }
  
 export default MyDesk;
+

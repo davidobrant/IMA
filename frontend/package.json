@@ -32,7 +32,8 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "sass": "^1.62.1",
-    "tabler-icons-react": "^1.56.0"
+    "tabler-icons-react": "^1.56.0",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.3",

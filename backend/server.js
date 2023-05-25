@@ -7,6 +7,7 @@ import userRoutes from './routes/userRoutes.js'
 import profileRoutes from './routes/profileRoutes.js'
 import signInRoutes from './routes/signInRoutes.js'
 import stationRoutes from './routes/stationRoutes.js'
+import computorRoutes from './routes/computorRoutes.js'
 import actionsRoutes from './routes/actionsRoutes.js'
 
 dotenv.config()
@@ -24,6 +25,7 @@ app.use('/api/users', userRoutes)
 app.use('/api/profile', profileRoutes)
 app.use('/api/signin', signInRoutes)
 app.use('/api/stations', stationRoutes)
+app.use('/api/computors', computorRoutes)
 app.use('/api/actions', actionsRoutes)
 
 app.listen(PORT, () => console.log(`[${BASE_URL}] Server 's up 'n running.. ;)`))

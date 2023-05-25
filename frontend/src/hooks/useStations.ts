@@ -12,6 +12,14 @@ const useStations = () => {
     } = useQuery(['getStations'], routes.getStations, {
         refetchInterval: 3000
     })
+
+    const getStationByUserId = (userId: number) => {
+        return stations?.find(s => s.userId === userId)
+    }
+    
+    const getAvailableStations = () => {
+        return stations?.filter(s => s.userId === null)
+    }
         
     useEffect(() => {
         if (loadingStations) {
@@ -31,6 +39,8 @@ const useStations = () => {
 
     return {
         stations, 
+        getStationByUserId,
+        getAvailableStations,
         loading,
         error
     }

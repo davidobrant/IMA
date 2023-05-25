@@ -1,6 +1,15 @@
+import useProfile from '@/hooks/useProfile'
+import { Box, Text, createStyles } from '@mantine/core'
 import Head from 'next/head'
+import Link from 'next/link'
+import {  } from 'next/router'
+import { ArrowRight} from 'tabler-icons-react'
 
 export default function Home() {
+  const { classes } = useStyles()
+  const { profile } = useProfile()
+  const isAdmin = !!profile?.roles?.includes("ADMIN")
+
   return (
     <>
       <Head>
@@ -10,8 +19,123 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        Yellow!
+        
+        <Text align='center' component='h1' fz={32} mb={40}>Welcome {`${profile?.firstName} ${profile?.lastName}!`}</Text>
+
+        <Box sx={{ display: "flex", justifyContent: "space-evenly", alignItems: "flex-start", gap: 40, minHeight: "60vh"}}>
+          <Link href={"/mydesk"}>
+            <Box 
+              className={classes.box} 
+              sx={({ colors, colorScheme}) => ({ 
+                background: colorScheme === "dark" ? colors.dark[9] : colors.gray[1],
+                boxShadow: colorScheme === "dark" ? `0 0 2px 2px rgba(255, 255, 0, .3)`: "0 0 2px 2px rgba(255, 255, 0, .3)",
+                "&:hover": {
+                  background: colorScheme === "dark" ? colors.yellow[6] : colors.yellow[4],
+                }
+              })}
+            >
+              <Text className={classes.title} >My Desk</Text>
+              <Text className={classes.description}>Administer your desk</Text>
+              <Box 
+                sx={{ 
+                  display: "grid", 
+                  placeContent: "center", 
+                  position: "absolute",
+                  bottom: 20,
+                  left: "50%",
+                  transform: "translateX(-50%)"
+                }}
+              >
+                <ArrowRight size={40}/>
+              </Box>
+            </Box>
+          </Link>
+
+          <Link href={"/office"}>
+            <Box 
+              className={classes.box} 
+              sx={({ colors, colorScheme}) => ({ 
+                background: colorScheme === "dark" ? colors.dark[9] : colors.gray[1],
+                boxShadow: colorScheme === "dark" ? `0 0 2px 2px rgba(0, 255, 255, .3)`: "0 0 2px 2px rgba(0, 255, 255, .3)",
+                "&:hover": {
+                  background: colorScheme === "dark" ? colors.cyan[6] : colors.cyan[4],
+                }
+              })}
+            >
+              <Text className={classes.title} >Office Map</Text>
+              <Text className={classes.description}>Administer office seats and computors</Text>
+              <Box 
+                sx={{ 
+                  display: "grid", 
+                  placeContent: "center", 
+                  position: "absolute",
+                  bottom: 20,
+                  left: "50%",
+                  transform: "translateX(-50%)"
+                }}
+              >
+                <ArrowRight size={40}/>
+              </Box>
+            </Box>
+          </Link>
+
+          {isAdmin ? <Link href={"/admin"}>
+            <Box 
+              className={classes.box} 
+              sx={({ colors, colorScheme}) => ({ 
+                background: colorScheme === "dark" ? colors.dark[9] : colors.gray[1],
+                boxShadow: colorScheme === "dark" ? `0 0 2px 2px rgba(178, 102, 255, .3)`: "0 0 2px 2px rgba(178, 102, 255, .3)",
+                "&:hover": {
+                  background: colorScheme === "dark" ? colors.grape[6] : colors.grape[4],
+                }
+              })}
+            >
+              <Text className={classes.title}>Admin Panel</Text>
+              <Text className={classes.description}>Administer users and computors</Text>
+              <Box 
+                sx={{ 
+                  display: "grid", 
+                  placeContent: "center", 
+                  position: "absolute",
+                  bottom: 20,
+                  left: "50%",
+                  transform: "translateX(-50%)"
+                }}
+              >
+                <ArrowRight size={40}/>
+              </Box>
+            </Box>
+          </Link> : undefined}
+        </Box>
       </main>
     </>
   )
 }
+
+const useStyles = createStyles(({ colorScheme, colors, fontSizes }) => ({
+  box: {
+    height: 200,
+    width: 300,
+    borderRadius: 8,
+    transition: "all 200ms ease-in-out",
+    border: `1px solid ${colorScheme === "dark" ? colors.dark[2] : colors.gray[3]}`,
+    position: "relative",
+    
+    "&:hover": {
+      transform: "scale(1.04)",
+      color: colorScheme === "dark" ? colors.dark[7] : colors.gray[9],
+    }
+  },
+  title: {
+    textAlign: "center",
+    padding: 8,
+    marginBottom: 4,
+    fontSize: fontSizes.lg,
+    fontWeight: 600,
+  },
+  description: {
+    textAlign: "center",
+
+  }
+
+}))

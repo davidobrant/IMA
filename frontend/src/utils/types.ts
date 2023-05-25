@@ -15,6 +15,8 @@ export interface IGetUserResponse {
     firstName: string, 
     lastName: string, 
     email: string, 
+    stationId?: number,
+    computorId?: number,
 }
 
 export interface IGetStationResponse {
@@ -22,4 +24,21 @@ export interface IGetStationResponse {
     userId: number,
     computorId: number,
     status: string, 
+}
+
+export interface IGetComputorResponse {
+    computorId: number, 
+    serialNr: string, 
+    type: string, 
+    status: string,
+    stationId?: number,
+    userId?: number
+}
+
+export interface IGetProfileResponse {
+    userId: number, 
+    email: string, 
+    firstName: string, 
+    lastName: string,
+    roles: 'AGENT' | 'TEAMLEADER' | 'ADMIN' []
 }

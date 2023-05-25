@@ -6,16 +6,24 @@ const useUser = (userId: number) => {
     const [loading, setLoading] = useState<boolean>(false)
     const { data: user, isLoading: loadingUser } = useQuery(['getUser', userId], () => routes.getUser(userId))
         
+    const { 
+        data: station, 
+        isLoading: loadingStation 
+    } = useQuery(['getStationByUser', userId], () => routes.getStationByUserId(userId), {
+        enabled: userId !== 0 || userId !== undefined
+    })
+
     useEffect(() => {
-        if (loadingUser) {
+        if (loadingUser || loadingStation) {
             setLoading(true)
         } else {
             setLoading(false)
         }
-    }, [loadingUser])
+    }, [loadingUser, loadingStation])
 
     return {
         user, 
+        station,
         loading
     }
 }

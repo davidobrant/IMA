@@ -7,8 +7,13 @@ const useUsers = () => {
     
     const { 
         data: users, 
-        isLoading: loadingUser 
+        isLoading: loadingUsers 
     } = useQuery(['getUsers'], routes.getUsers)
+    
+    const { 
+        data: admins, 
+        isLoading: loadingAdmins 
+    } = useQuery(['getAdmins'], routes.getAdmins)
 
     const { 
         data: activeUsers, 
@@ -25,19 +30,20 @@ const useUsers = () => {
     }
 
     useEffect(() => {
-        if (loadingUser || loadingActiveUsers || loadingInactiveUsers) {
+        if (loadingUsers || loadingActiveUsers || loadingInactiveUsers) {
             setLoading(true)
         } else {
             setLoading(false)
         }
-    }, [loadingUser, loadingActiveUsers, loadingInactiveUsers])
+    }, [loadingUsers, loadingActiveUsers, loadingInactiveUsers])
 
     return {
         users, 
-        activeUsers,
+        activeUsers: activeUsers?.sort((a,b) => a.userId - b.userId),
         inactiveUsers,
         loading,
         getUserById,
+        admins,
     }
 }
  

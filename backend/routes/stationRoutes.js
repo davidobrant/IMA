@@ -4,6 +4,7 @@ import stationController from '../controllers/stationController.js'
 const router = express.Router()
 
 router.get('/', stationController.getStations)
+router.get('/user/:userId', stationController.getStationByUserId)
 router.get('/:stationId', stationController.getStationById)
 router.put('/:stationId', stationController.updateStation)
 

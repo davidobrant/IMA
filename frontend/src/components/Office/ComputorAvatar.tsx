@@ -20,12 +20,19 @@ const ComputorAvatar = ({
     const [hover, setHover] = useState<boolean>(false)
     const { getComputorById } = useComputors() 
     const { setDraggingComputor } = useDragging()
+    const [dragging, setDragging] = useState<boolean>(false)
 
     const computor = getComputorById(station.computorId)
 
     const onDragStart = (e: any, params: any) => {
         e.dataTransfer.setData("computorParams", JSON.stringify(params))
+        setDragging(true)
         setDraggingComputor(true)
+    }
+
+    const onDragEnd = (e: any) => {
+        setDragging(false)
+        setDraggingComputor(false)
     }
 
     return ( 
@@ -40,14 +47,15 @@ const ComputorAvatar = ({
                     cx(classes.computorIcon, {
                         [classes.computorRight]: isRight, 
                         [classes.computorLeft]: !isRight,
-                        [classes.dragOver]: dragOver
+                        [classes.dragOver]: dragOver,
+                        [classes.dragging]: dragging
                         
                     })}
                 draggable
                 onDragStart={(e) => onDragStart(e, station)}
                 onMouseEnter={() => setHover(true)}
                 onMouseLeave={() => setHover(false)}
-                onDragEnd={() => setDraggingComputor(false)}
+                onDragEnd={onDragEnd}
             >
                 <DeviceLaptop size={40}/>
             </Box>
@@ -79,5 +87,8 @@ const useStyles = createStyles(() => ({
             userSelect: "none",
             pointerEvents: "none",
         }
+    },
+    dragging: {
+        opacity: .5
     }
 }))

@@ -13,15 +13,14 @@ db.connect(async (err, connection) => {
   if (err) {
     console.log(err)
   }
-  db.query(
-    `CREATE DATABASE IF NOT EXISTS ${process.env.DB_DATABASE}`,
+  db.query(`CREATE DATABASE IF NOT EXISTS ${process.env.DB_DATABASE}`,
     async (err, result) => {
       if (err) {
         process.exit(1);
       }
       console.log('--- Database created ---');
       process.exit(0);
-    }
+  }
   );
 });
 

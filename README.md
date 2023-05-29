@@ -4,7 +4,9 @@ Examensarbete
 
 ## Database
 
-run mysql:8.0 with docker on port 3306
+run mysql:8.0 with docker on port 3306 command:
+
+docker run --name ima-mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password -d mysql
 
 
 ## Backend

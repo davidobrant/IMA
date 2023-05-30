@@ -42,14 +42,6 @@ db.connect(async (err, connection) => {
     PRIMARY KEY (stationId)
     ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
     `;
-  let createStationsWithUsersTable = `CREATE TABLE StationsWithUsers (
-    stationId int NOT NULL, 
-    userId INT,
-    PRIMARY KEY (stationId),
-    CONSTRAINT FK_Station FOREIGN KEY (stationId) REFERENCES Stations(stationId),
-    CONSTRAINT FK_UserStation FOREIGN KEY (userId) REFERENCES Users(userId)
-    ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-    `;
   let createComputorsTable = `CREATE TABLE Computors (
     computorId int NOT NULL AUTO_INCREMENT, 
     serialNr varChar(45),
@@ -75,17 +67,12 @@ db.connect(async (err, connection) => {
           if (err) {
             process.exit(1);
           }
-          db.query(createStationsWithUsersTable, async (err) => {
-            if (err) {
+          db.query(createComputorsTable, async (err) => {
+            if(err) {
               process.exit(1);
             }
-            db.query(createComputorsTable, async (err) => {
-              if(err) {
-                process.exit(1);
-              }
-              console.log('--- TABLES CREATED ---');
-              process.exit(0);
-            })
+            console.log('--- TABLES CREATED ---');
+            process.exit(0);
           })
         });
       });

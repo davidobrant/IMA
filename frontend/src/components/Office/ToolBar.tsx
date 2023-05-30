@@ -28,7 +28,7 @@ const ToolBar = () => {
                     margin: 4,
                     gap: 2,
                 })}
-                >
+            >
                 <ItemContainer show={showUsers}>
                     <UserCircle onClick={() => setShowUsers(!showUsers)}/>
                 </ItemContainer>

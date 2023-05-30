@@ -16,12 +16,16 @@ const useProfile = () => {
         } else {
             setLoading(false)
         }
-
     }, [loadingProfile])
+
+    const isAdmin = !!profile?.roles.includes('ADMIN')
+    const isTeamLeader = !!profile?.roles.includes('TEAMLEADER')
 
     return {
         profile,
-        loading
+        loading,
+        isAdmin, 
+        isTeamLeader,
     }
 }
 

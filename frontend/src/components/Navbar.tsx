@@ -16,7 +16,6 @@ const Navbar = () => {
 
     const isAdmin = !!profile?.roles?.includes("ADMIN")
 
-
     useEffect(() => {
         if(!authUser?.token || !authUser?.userId) {
             logout()

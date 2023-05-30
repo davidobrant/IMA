@@ -92,7 +92,7 @@ const DropZone = () => {
                     {!loading ? <HomeDown /> : <Loader /> }
                 </Box>
             </Tooltip>
-                        </Box>
+        </Box>
      );
 }
  

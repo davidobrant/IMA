@@ -135,7 +135,7 @@ const createData = async () => {
         console.log('--- DATA CREATED ---')
         process.exit(0)
     } catch (error) {
-        console.log('ERROR CREATING DATA')
+        console.log('--- ERROR CREATING DATA ---')
         process.exit(1)
     }
 }

@@ -40,5 +40,5 @@ export interface IGetProfileResponse {
     email: string, 
     firstName: string, 
     lastName: string,
-    roles: 'AGENT' | 'TEAMLEADER' | 'ADMIN' []
+    roles: ['AGENT' | 'TEAMLEADER' | 'ADMIN']
 }

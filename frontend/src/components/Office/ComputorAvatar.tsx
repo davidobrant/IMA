@@ -17,9 +17,9 @@ const ComputorAvatar = ({
 }) => {
     const { classes, cx } = useStyles()
     const { showComputors } = useShowTooltips()
-    const [hover, setHover] = useState<boolean>(false)
     const { getComputorById } = useComputors() 
     const { setDraggingComputor } = useDragging()
+    const [hover, setHover] = useState<boolean>(false)
     const [dragging, setDragging] = useState<boolean>(false)
 
     const computor = getComputorById(station.computorId)
@@ -45,7 +45,7 @@ const ComputorAvatar = ({
             <Box 
                 className={
                     cx(classes.computorIcon, {
-                        [classes.computorRight]: isRight, 
+                        [classes.computorRight]: isRight,
                         [classes.computorLeft]: !isRight,
                         [classes.dragOver]: dragOver,
                         [classes.dragging]: dragging
@@ -75,9 +75,6 @@ const useStyles = createStyles(() => ({
     },
     computorLeft: {
         transform: "rotate(90deg)"
-    },
-    computorText: {
-
     },
     dragOver: {
         userSelect: "none",
